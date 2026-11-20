@@ -1,0 +1,15 @@
+// Add to ~/.config/waybar/config.jsonc:
+{
+  "custom/omavpn": {
+    "exec": "omavpn status --waybar",
+    "return-type": "json",
+    "interval": 3,
+    "on-click": "omavpn toggle",
+    "on-click-right": "xdg-terminal-exec --app-id=omavpn-tui -e omavpn"
+  }
+}
+
+// Optional Hyprland rule (~/.config/hypr/hyprland.conf):
+// windowrulev2 = float, class:^(omavpn-tui)$
+// windowrulev2 = size 960 640, class:^(omavpn-tui)$
+// windowrulev2 = center, class:^(omavpn-tui)$

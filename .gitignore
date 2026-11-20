@@ -1,0 +1,26 @@
+# Rust / Cargo
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# Build & packaging artifacts
+/dist/
+/release/
+*.pkg.tar.zst
+*.pkg.tar.xz
+*.tar.gz
+*.zip
+/packaging/pkg/
+/packaging/src/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs & temp
+*.log
+/run/
+tmp/

@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build release binaries
+        run: cargo build --release
+
+      - name: Prepare release archive
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          ARCHIVE="omavpn-${VERSION}-linux-x86_64"
+          mkdir -p "dist/${ARCHIVE}"
+          cp target/release/omavpn "dist/${ARCHIVE}/"
+          cp target/release/omavpnd "dist/${ARCHIVE}/"
+          cp systemd/omavpnd.service "dist/${ARCHIVE}/"
+          cp packaging/waybar.jsonc "dist/${ARCHIVE}/"
+          cp install.sh "dist/${ARCHIVE}/"
+          cp uninstall.sh "dist/${ARCHIVE}/"
+          cp README.md "dist/${ARCHIVE}/"
+          cp LICENSE "dist/${ARCHIVE}/"
+          chmod +x "dist/${ARCHIVE}/install.sh" "dist/${ARCHIVE}/uninstall.sh"
+          cd dist
+          tar -czvf "${ARCHIVE}.tar.gz" "${ARCHIVE}"
+          sha256sum "${ARCHIVE}.tar.gz" > SHA256SUMS.txt
+          cd ..
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.tar.gz
+            dist/SHA256SUMS.txt
+          generate_release_notes: true

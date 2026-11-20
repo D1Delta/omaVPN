@@ -1,0 +1,32 @@
+# Maintainer: omavpn contributors
+pkgname=omavpn
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Native Rust console & TUI VPN client for Arch Linux / Omarchy (sing-box + xray-core dual engine)"
+arch=('x86_64')
+url="https://github.com/mrros/omavpn"
+license=('GPL-3.0-or-later')
+depends=('sing-box' 'wl-clipboard')
+optdepends=(
+    'xray-bin: support for XHTTP transport and ML-KEM-768 post-quantum VLESS encryption'
+)
+makedepends=('cargo')
+options=('!strip')
+source=()
+sha256sums=()
+
+build() {
+  cd "$startdir/.."
+  unset CFLAGS CXXFLAGS LDFLAGS RUSTFLAGS
+  cargo build --release
+}
+
+package() {
+  cd "$startdir/.."
+  install -Dm755 "target/release/omavpn" "$pkgdir/usr/bin/omavpn"
+  install -Dm755 "target/release/omavpnd" "$pkgdir/usr/bin/omavpnd"
+  install -Dm644 "systemd/omavpnd.service" "$pkgdir/usr/lib/systemd/system/omavpnd.service"
+  install -Dm644 "packaging/waybar.jsonc" "$pkgdir/usr/share/omavpn/waybar.jsonc"
+  install -Dm644 "README.md" "$pkgdir/usr/share/doc/omavpn/README.md"
+  install -Dm644 "LICENSE" "$pkgdir/usr/share/licenses/omavpn/LICENSE"
+}
